@@ -1,5 +1,6 @@
 #pip install Pillow
 
+import os
 from PIL import Image
 
 def flip_image(image_path):
@@ -13,13 +14,16 @@ def flip_image(image_path):
     flipped_image.save('flipped_' + image_path)
     print("Image flipped and saved as 'flipped_" + image_path + "'.")
 
-# Provide the path to your 'image.txt' file here
-image_list_path = 'image.txt'
+# Provide the path to the folder containing the images
+folder_path = '/path/to/folder'
 
-# Read the image file paths from 'image.txt'
-with open(image_list_path, 'r') as file:
-    image_paths = file.read().splitlines()
+# List all files in the folder
+files = os.listdir(folder_path)
 
-# Process each image in the list
-for image_path in image_paths:
-    flip_image(image_path)
+# Process each file in the folder
+for file in files:
+    # Check if the file is an image (you can modify the condition to match specific image formats)
+    if file.endswith('.jpg') or file.endswith('.png'):
+        # Create the full path to the image file
+        image_path = os.path.join(folder_path, file)
+        flip_image(image_path)
