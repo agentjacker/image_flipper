@@ -1,29 +1,49 @@
-#pip install Pillow
-
 import os
 from PIL import Image
+import glob
+import sys
 
-def flip_image(image_path):
-    # Open the image
-    image = Image.open(image_path)
-    
-    # Flip the image horizontally
-    flipped_image = image.transpose(Image.FLIP_LEFT_RIGHT)
-    
-    # Save the flipped image
-    flipped_image.save('flipped_' + image_path)
-    print("Image flipped and saved as 'flipped_" + image_path + "'.")
+def flip_image(image_path, output_folder):
+    try:
+        # Open the image
+        image = Image.open(image_path)
 
-# Provide the path to the folder containing the images
-folder_path = '/path/to/folder'
+        # Flip the image horizontally
+        flipped_image = image.transpose(Image.FLIP_LEFT_RIGHT)
 
-# List all files in the folder
-files = os.listdir(folder_path)
+        # Get the filename and extension
+        file_name = os.path.basename(image_path)
+        file_name, extension = os.path.splitext(file_name)
 
-# Process each file in the folder
-for file in files:
-    # Check if the file is an image (you can modify the condition to match specific image formats)
-    if file.endswith('.jpg') or file.endswith('.png'):
-        # Create the full path to the image file
-        image_path = os.path.join(folder_path, file)
-        flip_image(image_path)
+        # Define the flipped image path
+        flipped_image_path = os.path.join(output_folder, file_name + '_flipped' + extension)
+
+        # Save the flipped image
+        flipped_image.save(flipped_image_path)
+        print("Image flipped and saved as:", flipped_image_path)
+
+        # Delete the original image file
+        os.remove(image_path)
+        print("Original image deleted:", image_path)
+    except (OSError, IOError) as e:
+        # Error occurred while opening or processing the image
+        print(f"Error processing image: {image_path} - {e}")
+
+# Provide the path to the folder containing the images in the Windows format
+folder_path = r'file/path'
+
+# Provide the path to the output folder where flipped images will be saved
+output_folder = r'file/path'
+
+# Create the output folder if it doesn't exist
+os.makedirs(output_folder, exist_ok=True)
+
+# Find all image files in the folder
+image_files = glob.glob(os.path.join(folder_path, '*.jpg')) + glob.glob(os.path.join(folder_path, '*.png'))
+
+# Process each image file
+for image_file in image_files:
+    flip_image(image_file, output_folder)
+
+# Exit the script
+sys.exit()
